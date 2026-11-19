@@ -10,7 +10,7 @@ const STEPS = [
 const PLAN_OPTIONS = ['basic', 'pro', 'enterprise']
 const COUNTRY_OPTIONS = ['US', 'IN', 'GB', 'CA', 'AU']
 
-export function SettingsForm({ accountId, drafts, stepErrors, saving, submitError, setDraft, setStepError, clearStepError, saveStep, submit, onBack }) {
+export function SettingsForm({ accountId, drafts, stepErrors, failedData, saving, submitError, setDraft, setStepError, clearStepError, saveStep, submit, onBack }) {
   const [step, setStep] = useState(1)
   const [local, setLocal] = useState({})
   const [dirty, setDirty] = useState(false)
@@ -20,23 +20,25 @@ export function SettingsForm({ accountId, drafts, stepErrors, saving, submitErro
   const [submitted, setSubmitted] = useState(false)
 
   // Adopt the saved draft when the step changes (and focus its first input).
+  // A rejected draft wins, so the value that caused the error stays visible with it.
   useEffect(() => {
+    const rejected = failedData?.[step]
     touchedRef.current = false
-    setLocal(drafts[step] || {})
-    setDirty(false)
+    setLocal(rejected || drafts[step] || {})
+    setDirty(Boolean(rejected))
     const timer = setTimeout(() => {
       if (firstInputRef.current) firstInputRef.current.focus()
     }, 50)
     return () => clearTimeout(timer)
-  }, [step])
+  }, [step, failedData])
 
   // Hydrate from the server once drafts arrive, without clobbering in-progress typing.
   useEffect(() => {
-    if (touchedRef.current) return
+    if (touchedRef.current || failedData?.[step]) return
     const server = drafts[step]
     if (!server) return
     setLocal((cur) => (Object.keys(cur).length === 0 ? server : cur))
-  }, [drafts, step])
+  }, [drafts, step, failedData])
 
   const normalize = (data) => {
     const next = { ...data }

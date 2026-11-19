@@ -25,11 +25,10 @@ This starts:
 Open http://localhost:3000 in your browser. From inside the frontend container,
 the mock API is reachable at `http://mock-api:8001`; Nginx proxies `/api/*` to it.
 
-No manual setup steps. The frontend image is pre-built and referenced by `image:`
-in `docker-compose.yml` (`namratha/callzo-task2-frontend:latest`). For the
-official submission, push that image to Docker Hub (or another public registry)
-and update the `image:` field accordingly — `docker compose up` must not need to
-build from source.
+No manual setup steps. The frontend image is pre-built and published to Docker Hub,
+and `docker-compose.yml` references it by `image:`
+(`namrathapeddamalla/callzo-task2-frontend:latest`), so `docker compose up` pulls it
+and never builds from source.
 
 ## Endpoints used
 
@@ -116,10 +115,9 @@ user is never navigated away or stuck.
 - **In-process polling.** `setInterval` every 30s for both accounts and summary.
   Simpler than WebSockets; the small data drift between polls is expected and
   handled gracefully.
-- **Image not pushed.** I could not push to Docker Hub (no credentials available in
-  this environment), so `docker-compose.yml` references `image:` with a locally
-  built tag. Build locally with `docker build -t namratha/callzo-task2-frontend:latest .`
-  before `docker compose up`, or push to your own registry and update `image:`.
+- **Pre-built image on Docker Hub.** `namrathapeddamalla/callzo-task2-frontend:latest`
+  is public, so `docker compose up` pulls it without credentials. Rebuilding is only
+  needed if you change the frontend: `docker build -t namrathapeddamalla/callzo-task2-frontend:latest .`
 
 ## What I cut and why
 

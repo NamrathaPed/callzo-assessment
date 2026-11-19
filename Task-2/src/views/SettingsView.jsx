@@ -7,6 +7,7 @@ export default function SettingsView({ accountId, onBack }) {
   const {
     drafts,
     stepErrors,
+    failedData,
     loading,
     saving,
     loadError,
@@ -29,6 +30,7 @@ export default function SettingsView({ accountId, onBack }) {
         accountId={accountId}
         drafts={drafts}
         stepErrors={stepErrors}
+        failedData={failedData}
         saving={saving}
         submitError={error}
         setDraft={setDraft}

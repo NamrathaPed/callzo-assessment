@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { getAccounts, getSummary, getSettings, saveStep as saveStepApi } from '../lib/api'
+import { getAccounts, getSummary, getSettings, saveStep as saveStepApi, submitSettings } from '../lib/api'
 
 const REFRESH_MS = 30000
 
@@ -164,6 +164,7 @@ export function useSettings(accountId) {
   const [state, setState] = useState({
     drafts: {},
     stepErrors: {},
+    failedData: {},
     loading: true,
     saving: false,
     loadError: null,
@@ -217,9 +218,12 @@ export function useSettings(accountId) {
       setState((s) => {
         const nextErrors = { ...s.stepErrors }
         delete nextErrors[step]
+        const nextFailed = { ...s.failedData }
+        delete nextFailed[step]
         return {
           ...s,
           drafts: { ...s.drafts, [step]: res.data || data },
+          failedData: nextFailed,
           saving: false,
           error: null,
           stepErrors: nextErrors,
@@ -232,6 +236,7 @@ export function useSettings(accountId) {
       setState((s) => ({
         ...s,
         saving: false,
+        failedData: { ...s.failedData, [step]: data },
         stepErrors: { ...s.stepErrors, [step]: stepErrors },
       }))
       return { ok: false, error: err }
