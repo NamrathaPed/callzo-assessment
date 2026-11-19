@@ -9,7 +9,7 @@ Stack: Python 3.12, FastAPI, PostgreSQL 16, psycopg 3. No ORM, so every query is
 ## Run it
 
 ```bash
-cd task1
+cd Task-1
 docker compose up --build
 ```
 
